@@ -16,6 +16,12 @@ jobs:
 
     permissions:
       contents: write   # needed to push updated macro.json
+      pages: write      # needed to deploy to GitHub Pages
+      id-token: write   # needed for OIDC token
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout repo
@@ -46,3 +52,15 @@ jobs:
             git commit -m "data: update macro indicators $(date -u +%Y-%m-%d)"
             git push
           fi
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
