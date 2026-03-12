@@ -1,0 +1,48 @@
+name: Weekly Macro Data Update
+
+on:
+  # Every Friday at 16:00 UTC (11:00 AM ET winter / 12:00 PM ET summer)
+  # Catches: jobless claims (Thu 8:30 AM ET), Fed H.4.1 (Thu 4:30 PM ET), NFCI (Fri 8:30 AM ET)
+  schedule:
+    - cron: "0 16 * * 5"
+
+  # Allow manual trigger from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  update-data:
+    name: Fetch FRED data and commit macro.json
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write   # needed to push updated macro.json
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run data update script
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python scripts/update_macro.py
+
+      - name: Commit updated macro.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/macro.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "data: update macro indicators $(date -u +%Y-%m-%d)"
+            git push
+          fi
