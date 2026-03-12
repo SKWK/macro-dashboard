@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Macro Early Warning Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ── Header ──────────────────────────────────────────────────────── -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="header-dot" id="status-dot"></div>
+      <div>
+        <h1 class="app-title">Macro Early Warning Dashboard</h1>
+        <p class="app-sub">Federal Reserve FRED &bull; Weekly Update</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="badge" id="regime-badge">—</span>
+      <span class="updated-label" id="updated-label">Loading&hellip;</span>
+    </div>
+  </header>
+
+  <!-- ── Primary Summary Cards ────────────────────────────────────────── -->
+  <div class="top-grid">
+
+    <div class="panel conditions-panel" id="conditions-panel">
+      <div class="panel-eyebrow">CURRENT CONDITIONS</div>
+      <div class="conditions-label" id="conditions-label">—</div>
+      <div class="conditions-score-row">
+        <span class="conditions-score-label">Score</span>
+        <span class="conditions-score-val" id="conditions-score">—</span>
+        <span class="conditions-score-max">/ 10</span>
+      </div>
+      <ul class="summary-drivers" id="conditions-drivers"></ul>
+    </div>
+
+    <div class="panel fwd-risk-panel" id="fwd-risk-panel">
+      <div class="panel-eyebrow">FORWARD RECESSION RISK &middot; 6&ndash;12M</div>
+      <div class="fwd-risk-context">Early Warning Level</div>
+      <div class="fwd-risk-label" id="fwd-risk-label">—</div>
+      <div class="fwd-risk-score-row">
+        <span class="fwd-risk-score-label">Score</span>
+        <span class="fwd-risk-score-val" id="fwd-risk-score">—</span>
+        <span class="fwd-risk-score-max">/ 100</span>
+      </div>
+      <ul class="summary-drivers" id="fwd-risk-drivers"></ul>
+    </div>
+
+    <div class="panel detspeed-panel" id="detspeed-panel">
+      <div class="panel-eyebrow">DETERIORATION SPEED</div>
+      <div class="detspeed-label" id="detspeed-label">—</div>
+      <div class="detspeed-count-row">
+        <span class="detspeed-count-label">Signals</span>
+        <span class="detspeed-count-val" id="detspeed-count">—</span>
+        <span class="detspeed-count-max">/ 7</span>
+      </div>
+      <ul class="summary-drivers" id="detspeed-drivers"></ul>
+      <div class="detspeed-sub">7 indicators · requires 1M + 3M confirmation</div>
+    </div>
+
+    <div class="panel confirm-panel" id="confirm-panel">
+      <div class="panel-eyebrow">RECESSION CONFIRMATION</div>
+      <div class="confirm-value" id="confirm-value">—</div>
+      <div class="confirm-score-row">
+        <span class="confirm-score-label">Score</span>
+        <span class="confirm-score-val" id="confirm-score">—</span>
+        <span class="confirm-score-max">/ 3</span>
+      </div>
+      <p class="confirm-sub" id="confirm-sub"></p>
+    </div>
+
+    <div class="panel global-liq-panel" id="global-liq-panel">
+      <div class="panel-eyebrow">GLOBAL LIQUIDITY</div>
+      <div class="global-liq-value" id="global-liq-value">—</div>
+      <div class="global-liq-change-row">
+        <span class="global-liq-change-label">1M Change</span>
+        <span class="global-liq-change-val" id="global-liq-1m">—</span>
+      </div>
+      <div class="global-liq-change-row">
+        <span class="global-liq-change-label">3M Change</span>
+        <span class="global-liq-change-val" id="global-liq-3m">—</span>
+      </div>
+      <ul class="summary-drivers" id="global-liq-drivers"></ul>
+    </div>
+
+  </div>
+
+  <!-- ── Secondary Panels ───────────────────────────────────────────────── -->
+  <div class="secondary-grid">
+
+    <div class="panel regime-panel" id="regime-panel">
+      <div class="panel-eyebrow">MACRO REGIME</div>
+      <div class="regime-name" id="regime-name">—</div>
+      <div class="regime-score-row">
+        <span class="regime-score-label">Risk score</span>
+        <span class="regime-score-val" id="regime-score">—</span>
+        <span class="regime-score-max">/ 10</span>
+      </div>
+      <ul class="regime-details" id="regime-details"></ul>
+    </div>
+
+    <div class="panel gauge-panel">
+      <div class="panel-eyebrow">RECESSION PROBABILITY</div>
+      <div class="gauge-wrap">
+        <svg id="gauge-svg" viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg" aria-label="Recession probability gauge"></svg>
+      </div>
+      <div class="gauge-scale">
+        <span class="scale-low">Low risk</span>
+        <span class="scale-high">High risk</span>
+      </div>
+    </div>
+
+    <div class="panel stress-panel" id="stress-panel">
+      <div class="panel-eyebrow">CREDIT STRESS LEVEL</div>
+      <div class="stress-value" id="stress-value">—</div>
+      <div class="stress-bars" id="stress-bars">
+        <div class="stress-bar" data-level="1"></div>
+        <div class="stress-bar" data-level="2"></div>
+        <div class="stress-bar" data-level="3"></div>
+      </div>
+      <p class="stress-sub">Based on delinquency rates, spreads &amp; lending standards</p>
+    </div>
+
+    <div class="panel liquidity-panel" id="liquidity-panel">
+      <div class="panel-eyebrow">LIQUIDITY REGIME</div>
+      <div class="liquidity-value" id="liquidity-value">—</div>
+      <div class="liquidity-index-row">
+        <span class="liquidity-index-label">Liquidity index</span>
+        <span class="liquidity-index-val" id="liquidity-index">—</span>
+      </div>
+      <p class="liquidity-sub">Fed balance sheet &bull; Reverse repo &bull; Treasury cash</p>
+    </div>
+
+    <div class="panel impulse-panel" id="impulse-panel">
+      <div class="panel-eyebrow">CREDIT IMPULSE</div>
+      <div class="impulse-value" id="impulse-value">—</div>
+      <div class="impulse-amount-row">
+        <span class="impulse-amount-label">3m vs 12m growth</span>
+        <span class="impulse-amount-val" id="impulse-amount">—</span>
+      </div>
+      <p class="impulse-sub" id="impulse-sub"></p>
+    </div>
+
+  </div>
+
+  <!-- ── Tradable Signals ─────────────────────────────────────────────── -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">TRADABLE SIGNALS</h2>
+      <span class="section-sub">Auto-generated from macro regime</span>
+    </div>
+    <div class="signals-grid" id="signals-grid">
+      <p class="placeholder">Loading signals&hellip;</p>
+    </div>
+  </section>
+
+  <!-- ── Deterioration Monitor ────────────────────────────────────────── -->
+  <section class="section" id="macro-alerts-section">
+    <div class="section-header">
+      <h2 class="section-title">SHORT-TERM MOMENTUM WATCH</h2>
+      <span class="section-sub">1M momentum alerts · 5 key indicators · separate from 7-indicator broad model</span>
+    </div>
+
+    <!-- Shift probability summary bar -->
+    <div class="shift-wrapper" id="shift-wrapper">
+      <div class="shift-summary">
+        <div class="shift-prob-col">
+          <div class="panel-eyebrow">REGIME SHIFT PROBABILITY</div>
+          <div class="shift-prob-value" id="shift-prob-value">—</div>
+        </div>
+        <div class="shift-divider"></div>
+        <div class="shift-count-col">
+          <div class="panel-eyebrow">SIGNALS DETERIORATING</div>
+          <div class="shift-count-row">
+            <span class="shift-count" id="shift-count">—</span>
+            <span class="shift-count-max">/ 5</span>
+          </div>
+          <div class="shift-dots" id="shift-dots"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Per-indicator alert cards -->
+    <div class="alerts-grid" id="alerts-grid">
+      <p class="placeholder">Loading alerts&hellip;</p>
+    </div>
+
+    <!-- Labor market confirmation details -->
+    <div class="section-header" style="margin-top:1.75rem">
+      <h2 class="section-title">LABOR MARKET CONFIRMATION</h2>
+      <span class="section-sub">Latest vs 13-week average &mdash; 3 labor signals</span>
+    </div>
+    <div class="confirm-details" id="confirm-details">
+      <p class="placeholder">Loading&hellip;</p>
+    </div>
+
+    <!-- Shift-specific trade positioning -->
+    <div class="section-header" style="margin-top:1.75rem">
+      <h2 class="section-title">SHIFT POSITIONING</h2>
+      <span class="section-sub">Suggested positioning based on regime shift probability</span>
+    </div>
+    <div class="signals-grid" id="shift-signals-grid">
+      <p class="placeholder">Loading signals&hellip;</p>
+    </div>
+  </section>
+
+  <!-- ── Indicator Monitor ────────────────────────────────────────────── -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">INDICATOR MONITOR</h2>
+      <span class="section-sub">Z-score vs 10-year history</span>
+    </div>
+    <div class="table-wrap">
+      <table class="indicator-table" id="indicator-table">
+        <thead>
+          <tr>
+            <th>Indicator</th>
+            <th>Series</th>
+            <th class="num-col">Latest</th>
+            <th class="num-col">Chg vs Prev</th>
+            <th class="trend-col">3M Trend</th>
+            <th class="zscore-col">Z-Score (10yr)</th>
+          </tr>
+        </thead>
+        <tbody id="indicator-tbody">
+          <tr><td colspan="6" class="placeholder">Loading&hellip;</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── Historical Charts ────────────────────────────────────────────── -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">HISTORICAL CHARTS</h2>
+      <span class="section-sub">Last 2 years — weekly data</span>
+    </div>
+    <div class="charts-grid" id="charts-grid">
+      <p class="placeholder">Loading charts&hellip;</p>
+    </div>
+  </section>
+
+  <footer class="app-footer">
+    Data sourced from the Federal Reserve Bank of St. Louis (FRED).
+    Macro regime and recession probability are rule-based indicators, not financial advice.
+  </footer>
+
+</div><!-- .app -->
+
+<script src="dashboard.js"></script>
+</body>
+</html>

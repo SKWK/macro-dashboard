@@ -1,0 +1,1067 @@
+/* ================================================================
+   Macro Early Warning Dashboard — Style Sheet
+   Dark professional theme inspired by Bloomberg / institutional
+   research terminals.
+   ================================================================ */
+
+/* ── Reset & Custom Properties ─────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Backgrounds */
+  --bg:          #080b11;
+  --surface:     #0f1520;
+  --surface-2:   #172030;
+  --surface-3:   #1e2a3d;
+
+  /* Borders */
+  --border:      #1e2a3d;
+  --border-2:    #263347;
+
+  /* Text */
+  --text:        #e2e8f0;
+  --text-2:      #94a3b8;
+  --text-3:      #4a5568;
+
+  /* Accent */
+  --accent:      #38bdf8;
+  --accent-dim:  rgba(56, 189, 248, 0.15);
+
+  /* Status colors */
+  --green:       #22c55e;
+  --green-dim:   rgba(34, 197, 94, 0.12);
+  --green-glow:  rgba(34, 197, 94, 0.25);
+  --yellow:      #f59e0b;
+  --yellow-dim:  rgba(245, 158, 11, 0.12);
+  --orange:      #f97316;
+  --orange-dim:  rgba(249, 115, 22, 0.12);
+  --red:         #ef4444;
+  --red-dim:     rgba(239, 68, 68, 0.12);
+  --red-glow:    rgba(239, 68, 68, 0.25);
+
+  /* Typography */
+  --font:        'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --mono:        'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+
+  /* Sizing */
+  --radius:      10px;
+  --radius-sm:   6px;
+  --max-w:       1200px;
+}
+
+/* ── Base ───────────────────────────────────────────────────────── */
+html {
+  font-size: 14px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── App Layout ─────────────────────────────────────────────────── */
+.app {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+
+/* ── Header ─────────────────────────────────────────────────────── */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.header-left  { display: flex; align-items: center; gap: 0.75rem; }
+.header-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+
+.header-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-3);
+  flex-shrink: 0;
+  transition: background 0.4s;
+}
+.header-dot.live { background: var(--green); box-shadow: 0 0 6px var(--green-glow); }
+
+.app-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--text);
+}
+
+.app-sub {
+  font-size: 0.75rem;
+  color: var(--text-2);
+  margin-top: 0.1rem;
+}
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 0.25rem 0.65rem;
+  border-radius: 50px;
+  border: 1px solid var(--border-2);
+  color: var(--text-2);
+  background: var(--surface);
+  transition: all 0.3s;
+}
+.badge.expansion  { border-color: var(--green);  color: var(--green);  background: var(--green-dim); }
+.badge.slowdown   { border-color: var(--yellow); color: var(--yellow); background: var(--yellow-dim); }
+.badge.late-cycle { border-color: var(--orange); color: var(--orange); background: var(--orange-dim); }
+.badge.recession  { border-color: var(--red);    color: var(--red);    background: var(--red-dim);
+                    animation: pulse-badge 2s ease-in-out infinite; }
+.badge.crisis     { border-color: #dc2626;       color: #fca5a5;       background: rgba(220,38,38,0.2);
+                    animation: pulse-badge 1s ease-in-out infinite; }
+/* Forward Recession Risk badge states */
+.badge.low      { border-color: var(--green);  color: var(--green);  background: var(--green-dim); }
+.badge.guarded  { border-color: var(--yellow); color: var(--yellow); background: var(--yellow-dim); }
+.badge.elevated { border-color: var(--orange); color: var(--orange); background: var(--orange-dim); }
+.badge.high     { border-color: var(--red);    color: var(--red);    background: var(--red-dim);
+                  animation: pulse-badge 2s ease-in-out infinite; }
+
+@keyframes pulse-badge {
+  0%, 100% { box-shadow: none; }
+  50%       { box-shadow: 0 0 12px var(--red-glow); }
+}
+
+.updated-label {
+  font-size: 0.72rem;
+  color: var(--text-3);
+  font-family: var(--mono);
+}
+
+/* ── Top Grid (5 primary cards) ─────────────────────────────────── */
+.top-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 1100px) {
+  .top-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 700px) {
+  .top-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 420px) {
+  .top-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Secondary Grid (legacy / supporting panels) ─────────────────── */
+.secondary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-top: 0.25rem;
+}
+
+/* ── Shared driver bullet list (used across new summary cards) ───── */
+.summary-drivers {
+  list-style: none;
+  margin-top: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.summary-drivers li {
+  font-size: 0.69rem;
+  color: var(--text-2);
+  padding-left: 1rem;
+  position: relative;
+  line-height: 1.45;
+}
+.summary-drivers li::before {
+  content: "·";
+  position: absolute;
+  left: 0.25rem;
+  color: var(--text-3);
+}
+
+/* ── Panel base ─────────────────────────────────────────────────── */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+}
+
+.panel-eyebrow {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 0.75rem;
+}
+
+/* ── Current Conditions Panel ──────────────────────────────────── */
+.conditions-panel { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.conditions-label {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  color: var(--text);
+  transition: color 0.3s;
+}
+.conditions-healthy      .conditions-label { color: var(--green);  }
+.conditions-softening    .conditions-label { color: var(--yellow); }
+.conditions-fragile      .conditions-label { color: var(--orange); }
+.conditions-recessionary .conditions-label { color: var(--red);    }
+
+.conditions-healthy      { border-color: rgba(34,  197, 94,  0.35); }
+.conditions-softening    { border-color: rgba(245, 158, 11,  0.35); }
+.conditions-fragile      { border-color: rgba(249, 115, 22,  0.35); }
+.conditions-recessionary { border-color: rgba(239, 68,  68,  0.5);
+                           background: linear-gradient(135deg, var(--surface) 0%, rgba(239,68,68,0.04) 100%); }
+
+.conditions-score-row   { display: flex; align-items: baseline; gap: 0.3rem; margin-top: 0.1rem; }
+.conditions-score-label { font-size: 0.72rem; color: var(--text-3); }
+.conditions-score-val   { font-size: 1.1rem; font-weight: 700; color: var(--text-2); font-family: var(--mono); }
+.conditions-score-max   { font-size: 0.72rem; color: var(--text-3); }
+
+/* ── Forward Recession Risk Panel ───────────────────────────────── */
+.fwd-risk-panel { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.fwd-risk-label {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  color: var(--text);
+  transition: color 0.3s;
+}
+.fwd-risk-low      .fwd-risk-label { color: var(--green);  }
+.fwd-risk-guarded  .fwd-risk-label { color: var(--yellow); }
+.fwd-risk-elevated .fwd-risk-label { color: var(--orange); }
+.fwd-risk-high     .fwd-risk-label { color: var(--red);    }
+
+.fwd-risk-low      { border-color: rgba(34,  197, 94,  0.35); }
+.fwd-risk-guarded  { border-color: rgba(245, 158, 11,  0.35); }
+.fwd-risk-elevated { border-color: rgba(249, 115, 22,  0.35); }
+.fwd-risk-high     { border-color: rgba(239, 68,  68,  0.5);
+                     background: linear-gradient(135deg, var(--surface) 0%, rgba(239,68,68,0.04) 100%);
+                     animation: pulse-badge 2s ease-in-out infinite; }
+
+.fwd-risk-context {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-top: -0.35rem;
+}
+
+.fwd-risk-score-row   { display: flex; align-items: baseline; gap: 0.3rem; margin-top: 0.1rem; }
+.fwd-risk-score-label { font-size: 0.72rem; color: var(--text-3); }
+.fwd-risk-score-val   { font-size: 1.1rem; font-weight: 700; color: var(--text-2); font-family: var(--mono); }
+.fwd-risk-score-max   { font-size: 0.72rem; color: var(--text-3); }
+
+/* ── Deterioration Speed Panel ──────────────────────────────────── */
+.detspeed-panel { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.detspeed-label {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  color: var(--text);
+  transition: color 0.3s;
+}
+.detspeed-low      .detspeed-label { color: var(--green);  }
+.detspeed-moderate .detspeed-label { color: var(--yellow); }
+.detspeed-high     .detspeed-label { color: var(--red);    }
+
+.detspeed-low      { border-color: rgba(34,  197, 94,  0.35); }
+.detspeed-moderate { border-color: rgba(245, 158, 11,  0.35); }
+.detspeed-high     { border-color: rgba(239, 68,  68,  0.5);  }
+
+.detspeed-count-row   { display: flex; align-items: baseline; gap: 0.3rem; margin-top: 0.1rem; }
+.detspeed-count-label { font-size: 0.72rem; color: var(--text-3); }
+.detspeed-count-val   { font-size: 1.1rem; font-weight: 700; color: var(--text-2); font-family: var(--mono); }
+.detspeed-count-max   { font-size: 0.72rem; color: var(--text-3); }
+.detspeed-sub         { font-size: 0.68rem; color: var(--text-3); margin-top: 0.4rem; }
+
+/* ── Regime Panel ───────────────────────────────────────────────── */
+.regime-panel { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.regime-name {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  color: var(--text);
+  transition: color 0.3s;
+}
+
+.regime-score-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  margin-top: 0.1rem;
+}
+.regime-score-label { font-size: 0.72rem; color: var(--text-3); }
+.regime-score-val   { font-size: 1.1rem; font-weight: 700; color: var(--text-2); font-family: var(--mono); }
+.regime-score-max   { font-size: 0.72rem; color: var(--text-3); }
+
+.regime-details {
+  list-style: none;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.regime-details li {
+  font-size: 0.72rem;
+  color: var(--text-2);
+  padding-left: 1rem;
+  position: relative;
+}
+.regime-details li::before {
+  content: "·";
+  position: absolute;
+  left: 0.25rem;
+  color: var(--text-3);
+}
+.regime-details:empty::after {
+  content: "All systems nominal";
+  font-size: 0.72rem;
+  color: var(--green);
+  padding-left: 0.25rem;
+}
+
+/* Regime color variants */
+.regime-expansion  .regime-name { color: var(--green);  }
+.regime-slowdown   .regime-name { color: var(--yellow); }
+.regime-late-cycle .regime-name { color: var(--orange); }
+.regime-recession  .regime-name { color: var(--red);    }
+.regime-crisis     .regime-name { color: #fca5a5;       }
+
+.regime-expansion  { border-color: rgba(34,  197, 94,  0.35); }
+.regime-slowdown   { border-color: rgba(245, 158, 11,  0.35); }
+.regime-late-cycle { border-color: rgba(249, 115, 22,  0.35); }
+.regime-recession  { border-color: rgba(239, 68,  68,  0.5);
+                     background: linear-gradient(135deg, var(--surface) 0%, rgba(239,68,68,0.04) 100%); }
+.regime-crisis     { border-color: rgba(220, 38,  38,  0.7);
+                     background: linear-gradient(135deg, var(--surface) 0%, rgba(220,38,38,0.08) 100%);
+                     animation: pulse-badge 1.5s ease-in-out infinite; }
+
+/* ── Gauge Panel ────────────────────────────────────────────────── */
+.gauge-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.gauge-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0;
+}
+
+#gauge-svg {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  overflow: visible;
+}
+
+.gauge-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: var(--text-3);
+  padding: 0 0.25rem;
+  margin-top: 0.25rem;
+}
+
+/* ── Stress Panel ───────────────────────────────────────────────── */
+.stress-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stress-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  transition: color 0.3s;
+}
+.stress-low    .stress-value { color: var(--green); }
+.stress-medium .stress-value { color: var(--yellow); }
+.stress-high   .stress-value { color: var(--red); }
+
+.stress-bars {
+  display: flex;
+  gap: 4px;
+  margin-top: 0.25rem;
+}
+
+.stress-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-3);
+  transition: background 0.3s;
+}
+
+/* js adds .active class */
+.stress-bar.active-low    { background: var(--green);  }
+.stress-bar.active-medium { background: var(--yellow); }
+.stress-bar.active-high   { background: var(--red);    }
+
+.stress-sub {
+  font-size: 0.68rem;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+/* ── Liquidity Panel ────────────────────────────────────────────── */
+.liquidity-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.liquidity-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  transition: color 0.3s;
+}
+.liquidity-loose   .liquidity-value { color: var(--green);  }
+.liquidity-neutral .liquidity-value { color: var(--yellow); }
+.liquidity-tight   .liquidity-value { color: var(--red);    }
+
+.liquidity-loose   { border-color: rgba(34,  197, 94,  0.35); }
+.liquidity-neutral { border-color: rgba(245, 158, 11,  0.35); }
+.liquidity-tight   { border-color: rgba(239, 68,  68,  0.35); }
+
+.liquidity-index-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  margin-top: 0.1rem;
+}
+.liquidity-index-label { font-size: 0.72rem; color: var(--text-3); }
+.liquidity-index-val   { font-size: 1.1rem; font-weight: 700; color: var(--text-2); font-family: var(--mono); }
+
+.liquidity-sub {
+  font-size: 0.68rem;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+/* ── Recession Confirmation Panel ──────────────────────────────── */
+.confirm-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.confirm-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  transition: color 0.3s;
+}
+.confirm-low   .confirm-value { color: var(--green);  }
+.confirm-watch .confirm-value { color: var(--yellow); }
+.confirm-high  .confirm-value { color: var(--red);    }
+
+.confirm-low   { border-color: rgba(34,  197, 94,  0.35); }
+.confirm-watch { border-color: rgba(245, 158, 11,  0.35); }
+.confirm-high  { border-color: rgba(239, 68,  68,  0.35); }
+
+.confirm-score-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  margin-top: 0.1rem;
+}
+.confirm-score-label { font-size: 0.72rem; color: var(--text-3); }
+.confirm-score-val   { font-size: 1.1rem; font-weight: 700; color: var(--text-2); font-family: var(--mono); }
+.confirm-score-max   { font-size: 0.72rem; color: var(--text-3); }
+
+.confirm-sub {
+  font-size: 0.68rem;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+/* ── Global Liquidity Panel ─────────────────────────────────────── */
+.global-liq-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.global-liq-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text);
+  transition: color 0.3s;
+}
+.global-liq-expanding  .global-liq-value { color: var(--green);  }
+.global-liq-neutral    .global-liq-value { color: var(--yellow); }
+.global-liq-contracting .global-liq-value { color: var(--red);   }
+
+.global-liq-expanding  { border-color: rgba(34,  197, 94,  0.35); }
+.global-liq-neutral    { border-color: rgba(245, 158, 11,  0.35); }
+.global-liq-contracting { border-color: rgba(239, 68,  68,  0.35); }
+
+.global-liq-change-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.global-liq-change-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  min-width: 5rem;
+}
+
+.global-liq-change-val {
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: var(--text-2);
+}
+.global-liq-change-val.up   { color: var(--green); }
+.global-liq-change-val.down { color: var(--red);   }
+
+/* ── Credit Impulse Panel ───────────────────────────────────────── */
+.impulse-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.impulse-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  transition: color 0.3s;
+}
+.impulse-positive .impulse-value { color: var(--green);  }
+.impulse-neutral  .impulse-value { color: var(--yellow); }
+.impulse-negative .impulse-value { color: var(--red);    }
+
+.impulse-positive { border-color: rgba(34,  197, 94,  0.35); }
+.impulse-neutral  { border-color: rgba(245, 158, 11,  0.35); }
+.impulse-negative { border-color: rgba(239, 68,  68,  0.35); }
+
+.impulse-amount-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  margin-top: 0.1rem;
+}
+.impulse-amount-label { font-size: 0.72rem; color: var(--text-3); }
+.impulse-amount-val   { font-size: 1.1rem; font-weight: 700; color: var(--text-2); font-family: var(--mono); }
+
+.impulse-sub {
+  font-size: 0.68rem;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+/* Confirmation details rows (under Macro Alerts) */
+.confirm-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.confirm-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.confirm-row.triggered { border-left-color: var(--red);   background: linear-gradient(135deg, var(--surface) 0%, rgba(239,68,68,0.03) 100%); }
+.confirm-row.ok        { border-left-color: var(--green); }
+
+.confirm-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+.confirm-row-label { font-size: 0.78rem; font-weight: 600; color: var(--text); }
+
+.confirm-row-pill {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+.confirm-row-pill.triggered { background: var(--red-dim);   color: var(--red);   }
+.confirm-row-pill.ok        { background: var(--green-dim); color: var(--green); }
+
+.confirm-row-metrics {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.2rem;
+  flex-wrap: wrap;
+}
+.confirm-metric { display: flex; flex-direction: column; gap: 0.1rem; }
+
+/* ── Regime Shift / Macro Alerts ───────────────────────────────── */
+.shift-wrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.3s;
+}
+
+.shift-low      { border-color: rgba(34,  197, 94,  0.4); }
+.shift-moderate { border-color: rgba(245, 158, 11,  0.5); }
+.shift-high     { border-color: rgba(239, 68,  68,  0.6);
+                  background: linear-gradient(135deg, var(--surface) 0%, rgba(239,68,68,0.04) 100%); }
+
+.shift-summary {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.shift-prob-col, .shift-count-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.shift-divider {
+  width: 1px;
+  height: 3rem;
+  background: var(--border-2);
+  flex-shrink: 0;
+}
+
+.shift-prob-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  transition: color 0.3s;
+}
+.shift-low      .shift-prob-value { color: var(--green);  }
+.shift-moderate .shift-prob-value { color: var(--yellow); }
+.shift-high     .shift-prob-value { color: var(--red);    }
+
+.shift-count-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+}
+.shift-count { font-size: 1.75rem; font-weight: 800; color: var(--text); font-family: var(--mono); }
+.shift-count-max { font-size: 0.75rem; color: var(--text-3); }
+
+.shift-dots {
+  display: flex;
+  gap: 5px;
+  margin-top: 0.15rem;
+}
+.shift-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  border: 1px solid var(--border-2);
+  transition: background 0.3s;
+}
+.shift-dot.active { background: var(--red); border-color: var(--red); box-shadow: 0 0 4px var(--red-glow); }
+
+/* Alert cards grid */
+.alerts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 0.75rem;
+}
+
+.alert-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: border-color 0.2s;
+}
+.alert-card.deteriorating { border-left-color: var(--red);   background: linear-gradient(135deg, var(--surface) 0%, rgba(239,68,68,0.03) 100%); }
+.alert-card.stable        { border-left-color: var(--green); }
+
+.alert-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+.alert-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.alert-pill {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+.alert-pill.deteriorating { background: var(--red-dim);   color: var(--red);   }
+.alert-pill.stable        { background: var(--green-dim); color: var(--green); }
+
+.alert-message {
+  font-size: 0.7rem;
+  color: var(--text-2);
+  line-height: 1.4;
+}
+
+.alert-metrics {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.2rem;
+  flex-wrap: wrap;
+}
+.alert-metric { display: flex; flex-direction: column; gap: 0.1rem; }
+.metric-label { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-3); }
+.metric-val   { font-size: 0.75rem; font-family: var(--mono); color: var(--text-2); }
+.metric-val.bad  { color: var(--red);   }
+.metric-val.good { color: var(--green); }
+
+/* Neutral signal cards (for LOW shift probability) */
+.signal-card.neutral  { border-left: 3px solid var(--text-3); }
+.signal-pill.neutral  { background: var(--surface-3); color: var(--text-2); }
+
+/* ── Section Wrapper ────────────────────────────────────────────── */
+.section {
+  margin-bottom: 2rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.section-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.section-sub {
+  font-size: 0.68rem;
+  color: var(--text-3);
+}
+
+/* ── Signals Grid ───────────────────────────────────────────────── */
+.signals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+}
+
+.signal-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  transition: border-color 0.2s;
+}
+.signal-card:hover { border-color: var(--border-2); }
+
+.signal-card.bullish { border-left: 3px solid var(--green); }
+.signal-card.bearish { border-left: 3px solid var(--red);   }
+
+.signal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.signal-asset {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.signal-pill {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 50px;
+}
+.signal-pill.bullish { background: var(--green-dim); color: var(--green); }
+.signal-pill.bearish { background: var(--red-dim);   color: var(--red);   }
+
+.signal-rationale {
+  font-size: 0.72rem;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+
+/* ── Indicator Table ────────────────────────────────────────────── */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.indicator-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  background: var(--surface);
+}
+
+.indicator-table thead tr {
+  background: var(--surface-2);
+}
+
+.indicator-table th {
+  padding: 0.6rem 0.9rem;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.indicator-table td {
+  padding: 0.65rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.indicator-table tbody tr:last-child td { border-bottom: none; }
+.indicator-table tbody tr:hover { background: var(--surface-2); }
+
+/* Group header rows */
+.group-row td {
+  background: var(--surface-2);
+  color: var(--text-3);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 0.4rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+}
+
+/* Column types */
+.num-col    { text-align: right; }
+.trend-col  { text-align: center; }
+.zscore-col { min-width: 160px; }
+
+td.series-code {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-3);
+}
+
+td.num-val {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.chg-positive { color: var(--green); }
+.chg-negative { color: var(--red);   }
+.chg-neutral  { color: var(--text-3); }
+
+/* Trend badge */
+.trend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+.trend-badge.improving    { background: var(--green-dim); color: var(--green);  }
+.trend-badge.deteriorating{ background: var(--red-dim);   color: var(--red);    }
+.trend-badge.neutral      { background: var(--surface-3); color: var(--text-3); }
+
+/* Z-score bar */
+.z-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.z-track {
+  flex: 1;
+  height: 6px;
+  background: var(--surface-3);
+  border-radius: 3px;
+  position: relative;
+}
+
+.z-center-tick {
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 10px;
+  background: var(--border-2);
+}
+
+.z-fill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 3px;
+  transition: all 0.4s ease;
+}
+
+.z-fill.risk    { background: var(--red);    }
+.z-fill.safe    { background: var(--green);  }
+.z-fill.neutral { background: var(--text-3); }
+
+.z-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text-2);
+  min-width: 38px;
+  text-align: right;
+}
+
+.placeholder {
+  color: var(--text-3);
+  font-size: 0.8rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* ── Charts Grid ────────────────────────────────────────────────── */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 900px)  { .charts-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px)  { .charts-grid { grid-template-columns: 1fr; } }
+
+.chart-card {
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.chart-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.chart-card-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.chart-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chart-card-value {
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: var(--text);
+}
+
+.chart-card-change {
+  font-size: 0.7rem;
+  font-family: var(--mono);
+}
+.chart-card-change.up   { color: var(--green); }
+.chart-card-change.down { color: var(--red);   }
+
+.chart-canvas-wrap {
+  height: 110px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────── */
+.app-footer {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.7rem;
+  color: var(--text-3);
+  text-align: center;
+  line-height: 1.7;
+}
