@@ -1,11 +1,11 @@
 {
-  "updated": "2026-03-12",
+  "updated": "2026-03-13",
   "macro_regime": "Expansion",
   "regime_score": 0,
   "regime_details": [],
-  "recession_probability": 14.4,
+  "recession_probability": 14.6,
   "credit_stress_level": "Medium",
-  "liquidity_index": 0.21,
+  "liquidity_index": 0.208,
   "liquidity_regime": "Neutral",
   "regime_shift_probability": "LOW",
   "regime_shift_count": 1,
@@ -39,9 +39,9 @@
       "message": "Credit spreads widening",
       "deteriorating": false,
       "severity": "stable",
-      "momentum_z": 0.272,
-      "change_1m": 14.0,
-      "change_3m": 18.0
+      "momentum_z": 0.405,
+      "change_1m": 22.0,
+      "change_3m": 26.0
     },
     {
       "series_id": "NFCI",
@@ -113,7 +113,7 @@
   },
   "forward_recession_risk": {
     "label": "Guarded",
-    "score": 26,
+    "score": 29,
     "drivers": [
       "Credit card delinquency elevated (z=1.0); Consumer loan delinquency elevated (z=1.1)",
       "Yield curve positive but flattening (0.51%), early warning (1M: -0.13%)",
@@ -1269,11 +1269,11 @@
       "group": "financial",
       "unit": "bps",
       "higher_is_bad": true,
-      "latest_value": 309.0,
+      "latest_value": 317.0,
       "prev_value": 313.0,
-      "period_change": -4.0,
+      "period_change": 4.0,
       "trend_3m": "deteriorating",
-      "z_score": -0.876,
+      "z_score": -0.811,
       "history_dates": [
         "2024-03-24",
         "2024-03-31",
@@ -1484,7 +1484,7 @@
         286.0,
         312.0,
         313.0,
-        309.0
+        317.0
       ]
     },
     {
@@ -2495,7 +2495,7 @@
       "prev_value": 6628.894,
       "period_change": 17.45,
       "trend_3m": "neutral",
-      "z_score": 0.242,
+      "z_score": 0.24,
       "history_dates": [
         "2024-03-24",
         "2024-03-31",
@@ -2943,7 +2943,7 @@
       "prev_value": 832.053,
       "period_change": 6.133,
       "trend_3m": "improving",
-      "z_score": 0.737,
+      "z_score": 0.736,
       "history_dates": [
         "2024-03-24",
         "2024-03-31",
@@ -3392,7 +3392,7 @@
       "period_change": 101.322,
       "change_3m": 128.502,
       "trend_3m": "improving",
-      "z_score": 0.582,
+      "z_score": 0.58,
       "history_dates": [
         "2024-03-24",
         "2024-03-31",
